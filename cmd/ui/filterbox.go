@@ -20,14 +20,14 @@ var configFilePath string
 var fyneWindow fyne.Window
 var selectedIndex int = -1 // Initially, no item is selected
 
-func main() {
+func main() {	
 	// Load AppLogger
 	var logLevelParameter string
 	flag.StringVar(&logLevelParameter, "loglevel", "info", "Set the logging level (error, warn, info, debug)")
 	flag.Parse()
 
 	var err error
-	AppLogger, err = logger.CreateLogger(logLevelParameter)
+	AppLogger, err = logger.CreateLogger(logLevelParameter, "filterbox-ui.log")
 	if err != nil {
 		log.Printf("Failed to create logger: %s", err)
 		os.Exit(1)

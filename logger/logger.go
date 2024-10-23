@@ -80,18 +80,36 @@ func init() {
     log.SetFlags(0) // Turn off flags since we are handling it
 }
 
-func CreateLogger(logLevelParameter string) (*Logger, error) {
+func CreateLogger(logLevelParameter string, fileName string) (*Logger, error) {
     logLevel, err := StringToLogLevel(logLevelParameter)
     if err != nil {
         return nil, err
     }
 
-    exePath, err := os.Executable()
-    if err != nil {
-        return nil, fmt.Errorf("failed to get executable path: %v", err)
+    var logDir string
+    if runtime.GOOS == "windows" {
+        localAppData := os.Getenv("LOCALAPPDATA")
+        if localAppData == "" {
+            return nil, fmt.Errorf("failed to get LOCALAPPDATA environment variable")
+        }
+        logDir = filepath.Join(localAppData, "FilterBox")
+    } else {
+        homeDir, err := os.UserHomeDir()
+        if err != nil {
+            return nil, fmt.Errorf("failed to get user home directory: %v", err)
+        }
+        logDir = filepath.Join(homeDir, ".local", "share", "FilterBox")
     }
-    logDir := filepath.Dir(exePath)
-    logFilePath := filepath.Join(logDir, "filterbox-daemon.log")
+
+    // Create the log directory if it doesn't exist
+    if _, err := os.Stat(logDir); os.IsNotExist(err) {
+        err = os.MkdirAll(logDir, 0755)
+        if err != nil {
+            return nil, fmt.Errorf("failed to create log directory: %v", err)
+        }
+    }
+
+    logFilePath := filepath.Join(logDir, fileName)
 
     logFile, err := os.OpenFile(logFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
     if err != nil {

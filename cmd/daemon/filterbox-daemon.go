@@ -36,7 +36,7 @@ func main() {
     flag.Parse()
 
     var err error
-    AppLogger, err = logger.CreateLogger(logLevelParameter)
+    AppLogger, err = logger.CreateLogger(logLevelParameter, "filterbox-daemon.log")
     if (err != nil) {
         log.Printf("Failed to create logger: %s", err)
         os.Exit(1)

@@ -1,17 +1,15 @@
 .PHONY: build-ui build-daemon install clean create-install-dir
 
-OS := $(shell uname -s 2>/dev/null || echo Windows_NT)
-
-ifeq ($(OS), Linux)
+ifeq ($(OS), Windows_NT)
+	BINARY_DIR=bin
+    DAEMON_BINARY=$(BINARY_DIR)\filterbox-daemon.exe
+    UI_BINARY=$(BINARY_DIR)\filterbox-ui.exe
+    INSTALL_LOCATION=C:\Program Files\FilterBox
+else
     BINARY_DIR=./bin
     DAEMON_BINARY=$(BINARY_DIR)/filterbox-daemon
     UI_BINARY=$(BINARY_DIR)/filterbox-ui
     INSTALL_LOCATION=/usr/local/bin
-else ifeq ($(OS), Windows_NT)
-    BINARY_DIR=bin
-    DAEMON_BINARY=$(BINARY_DIR)\filterbox-daemon.exe
-    UI_BINARY=$(BINARY_DIR)\filterbox-ui.exe
-    INSTALL_LOCATION=C:\Program Files\FilterBox
 endif
 
 all: build-daemon build-ui
@@ -23,10 +21,23 @@ build-daemon:
 
 build-ui:
 	@echo "Building UI..."
+ifeq ($(OS), Windows_NT)
+	@go build -ldflags="-H windowsgui" -o $(UI_BINARY) ./cmd/ui
+else
 	@go build -o $(UI_BINARY) ./cmd/ui
+endif
 
 install: create-install-dir
-ifeq ($(OS), Linux)
+ifeq ($(OS), Windows_NT)
+	@echo "Installing on Windows..."
+	@copy "$(DAEMON_BINARY)" "$(INSTALL_LOCATION)\filterbox-daemon.exe"
+	@copy "$(UI_BINARY)" "$(INSTALL_LOCATION)\filterbox.exe"
+	@copy "dist\uninstall.bat" "$(INSTALL_LOCATION)\uninstall.bat"
+	@echo Installing Windows service...
+	@"$(INSTALL_LOCATION)\filterbox-daemon.exe" install
+	@"$(INSTALL_LOCATION)\filterbox-daemon.exe" start
+	@echo FilterBox daemon successfully installed and started.
+else
 	@echo "Installing on Linux..."
 	@sudo cp $(DAEMON_BINARY) ${INSTALL_LOCATION}/filterbox-daemon
 	@sudo cp $(UI_BINARY) ${INSTALL_LOCATION}/filterbox
@@ -36,15 +47,6 @@ ifeq ($(OS), Linux)
 	@systemctl --user enable filterbox-daemon
 	@systemctl --user start filterbox-daemon
 	@echo "FilterBox daemon successfully installed, and started."
-else ifeq ($(OS), Windows_NT)
-	@echo "Installing on Windows..."
-	@copy "$(DAEMON_BINARY)" "$(INSTALL_LOCATION)\filterbox-daemon.exe"
-	@copy "$(UI_BINARY)" "$(INSTALL_LOCATION)\filterbox.exe"
-	@copy "dist\uninstall.bat" "$(INSTALL_LOCATION)\uninstall.bat"
-	@echo Installing Windows service...
-	@"$(INSTALL_LOCATION)\filterbox-daemon.exe" install
-	@"$(INSTALL_LOCATION)\filterbox-daemon.exe" start
-	@echo FilterBox daemon successfully installed and started.
 endif
 
 uninstall:
