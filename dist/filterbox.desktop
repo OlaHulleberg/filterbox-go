@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=FilterBox
+Exec=StartupWMClass=FilterBox Config Editor
+
+Terminal=false
+Type=Application
+Icon=/usr/local/bin/filterbox
+Categories=GNOME;GTK
+StartupNotify=true
