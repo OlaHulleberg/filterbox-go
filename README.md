@@ -33,8 +33,9 @@ This is a cross-platform "remix" inspired by [Techial's FilterBox](https://githu
 
 ### Prerequisites
 
-- Golang installed on your system
-- Fyne (for UI components, if modifying the UI)
+- **Golang**: Ensure Golang is installed on your system.
+- **Fyne**: Required for UI components if you plan to modify the UI.
+- **C Compiler**: GCC or any Golang-supported C compiler, to compile the UI.
 
 ### Building from Source
 
