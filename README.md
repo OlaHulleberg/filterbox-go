@@ -60,7 +60,7 @@ This is a cross-platform "remix" inspired by [Techial's FilterBox](https://githu
 
 3. **Install:**
    ```bash
-   make install
+   sudo make install
    ```
    This step sets up the FilterBox daemon and UI on your Unix system, for the current user.
 
