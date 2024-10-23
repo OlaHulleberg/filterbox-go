@@ -28,6 +28,10 @@ This is a cross-platform "remix" inspired by [Techial's FilterBox](https://githu
 - **Resource-Efficient**: Runs with minimal system impact, utilizing an event-driven approach for file monitoring.
 - **Adaptive Configuration**: Implements changes to filter settings in real-time, keeping your syncing preferences up-to-date.
 - **Cross-Platform Support**: Compatible with Windows, Linux, and macOS, offering a smooth experience on any platform.
+- **Minimalistic Configurator**: A straightforward, no-nonsense configurator. Cross-platform, of course.
+
+![Filterbox configurator - add filter](assets/filterbox-configurator-filter.png)
+![Filterbox configurator](assets/filterbox-configurator.png)
 
 ## 🔧 Building and Installation
 
