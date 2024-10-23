@@ -1,5 +1,6 @@
 <div align="center">
-  <h1>FilterBox</h1>
+  <img src="assets/filterbox-dev.png" alt="You - A developer using FilterBox"/>
+  <h1>FilterBox - Go</h1>
 </div>
 
 <div align="center">
