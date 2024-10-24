@@ -21,6 +21,14 @@ if %errorLevel% neq 0 (
     exit /b %errorLevel%
 )
 
+:: Check if the FilterBoxDaemon service is running and stop it
+echo Checking if FilterBoxDaemon service is running...
+sc query FilterBoxDaemon | find "RUNNING" >nul 2>&1
+if %errorLevel% equ 0 (
+    echo Uninstalling FilterBoxDaemon service...
+    make uninstall
+)
+
 :: Run make install
 echo Installing project...
 make install

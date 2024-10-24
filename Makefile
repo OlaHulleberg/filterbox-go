@@ -50,11 +50,15 @@ else
 endif
 
 uninstall:
+ifeq ($(OS), Windows_NT)
+	@cd "$(INSTALL_LOCATION)" && "$(INSTALL_LOCATION)\uninstall.bat"
+else
 	@echo "Uninstalling"
 	@systemctl --user stop filterbox-daemon
 	@systemctl --user disable filterbox-daemon
 	@sudo rm /usr/local/bin/filterbox-daemon
 	@sudo rm /usr/local/bin/filterbox
+endif
 
 clean:
 	@echo "Cleaning up..."
