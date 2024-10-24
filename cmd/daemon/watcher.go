@@ -174,38 +174,35 @@ func startWatching() {
 	})
 
 	if err != nil {
-		AppLogger.Println(logger.LevelWarn, err) // Directory may have been deleted
+		AppLogger.Println(logger.LevelWarn, err) // Path may have been deleted
 	}
 
 	<-done
 }
 
-func handleDirectoryLifetime(event fsnotify.Event) {
-	if event.Has(fsnotify.Create) {
-		err := watcher.Add(event.Name)
-		if err != nil {
-			AppLogger.Printf(logger.LevelError, "Failed to add directory to watcher: %s, error: %v", event.Name, err)
-		} else {
-			AppLogger.Printf(logger.LevelDebug, "Adding directory to watcher: %s", event.Name)
-		}
+func addPathToWatcher(event fsnotify.Event) {
+	err := watcher.Add(event.Name)
+	if err != nil {
+		AppLogger.Printf(logger.LevelError, "Failed to add path to watcher: %s, error: %v", event.Name, err)
+	} else {
+		AppLogger.Printf(logger.LevelDebug, "Adding path to watcher: %s", event.Name)
 	}
 }
 
 func handleEvent(event fsnotify.Event, config common.Configuration) {
-	handleDirectoryLifetime(event)
-	if event.Has(fsnotify.Create) || event.Has(fsnotify.Rename) {
-		if isFile(event.Name) {
-			if shouldIgnore(event.Name, "file", config) {
-				AppLogger.Println(logger.LevelInfo, "Adding ignore xattr to file:", event.Name)
-				ignoreFile(event.Name)
-			}
-		} else {
-			if shouldIgnore(event.Name, "directory", config) {
-				AppLogger.Println(logger.LevelInfo, "Adding ignore xattr to directory:", event.Name)
-				ignoreFile(event.Name)
-			}
-		}
-	}
+    if event.Has(fsnotify.Create) || event.Has(fsnotify.Rename) {
+        entityType := "directory"
+        if isFile(event.Name) {
+            entityType = "file"
+        } else {
+            addPathToWatcher(event)
+        }
+
+        if shouldIgnore(event.Name, entityType, config) {
+            AppLogger.Printf(logger.LevelInfo, "Adding ignore xattr to %s: %s", entityType, event.Name)
+            ignoreFile(event.Name)
+        }
+    }
 }
 
 func ignoreFile(filePath string) {
